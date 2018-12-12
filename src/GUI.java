@@ -65,10 +65,27 @@ public class GUI extends JFrame {
                     if(mines[i][j] == 1){
                         g.setColor(Color.yellow);
                     }
+                    if(revealed[i][j] == true){
+                        g.setColor(Color.WHITE);
+                        if(mines[i][j] == 1){
+                            g.setColor(Color.RED);
+                        }
+                    }
                     if(mx >= spacing + i * 80 && mx < i * 80 + 80 - spacing && my >= spacing + j * 80 + 80 + 26 && my < j * 80 + 26 + 80 + 80 - spacing){
-                        g.setColor(Color.RED);
+                        g.setColor(Color.lightGray);
                     }
                     g.fillRect(spacing + i * 80, spacing + j * 80 + 80, 80 - 2 * spacing, 80 - 2 * spacing);
+                    if(revealed[i][j] == true) {
+                        g.setColor(Color.BLACK);
+                        if (mines[i][j] == 0) {
+                            g.setFont(new Font("Tahoma", Font.BOLD, 40));
+                            g.drawString(Integer.toString(neighbours[i][j]), i * 80 + 27, j * 80 + 80 + 55);
+                        } else {
+                            g.fillRect(i * 80 + 30, j * 80 + 100, 20, 40);
+                            g.fillRect(i * 80 + 20, j * 80 + 110, 40, 20);
+                            g.fillRect(i * 80 + 25, j * 80 + 105, 30, 30);
+                        }
+                    }
                 }
             }
         }
