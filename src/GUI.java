@@ -20,10 +20,14 @@ public class GUI extends JFrame {
     boolean[][] flagged = new boolean[16][9];
     int smileyX = 605;
     int smileyY = 5;
+    public int smileyCenterX = smileyX + 35;
+    public int smileyCenterY = smileyY + 55;
     int timeX = 1150;
     int timeY = 5;
     int sec = 0;
     boolean happiness = true;
+    public boolean victory = false;
+    public boolean defeat = false;
 
     public GUI(){
         this.setTitle("Minesweeper");
@@ -70,9 +74,6 @@ public class GUI extends JFrame {
             for(int i = 0; i < 16; i++){
                 for(int j = 0; j < 9; j++){
                     g.setColor(Color.GRAY);
-                    if(mines[i][j] == 1){
-                        g.setColor(Color.yellow);
-                    }
                     if(revealed[i][j] == true){
                         g.setColor(Color.WHITE);
                         if(mines[i][j] == 1){
@@ -175,6 +176,10 @@ public class GUI extends JFrame {
             } else {
                 System.out.println("The pointer is not inside of any box");
             }
+
+            if(inSmiley() == true){
+                resetAll();
+            }
         }
 
         @Override
@@ -196,6 +201,47 @@ public class GUI extends JFrame {
         public void mouseExited(MouseEvent e) {
 
         }
+    }
+
+    public void resetAll(){
+        startDate = new Date();
+        happiness = true;
+        victory = false;
+        defeat = false;
+
+        for(int i = 0; i < 16; i++){
+            for(int j = 0; j < 9; j++){
+                if(rand.nextInt(100) < 20){
+                    mines[i][j] = 1;
+                } else {
+                    mines[i][j] = 0;
+                }
+                revealed[i][j] = false;
+                flagged[i][j] = false;
+            }
+        }
+        for(int i = 0; i < 16; i++){
+            for(int j = 0; j < 9; j++){
+                neighs = 0;
+                for(int m = 0; m < 16; m++){
+                    for(int n = 0; n < 9; n++){
+                        if(!(m == i && n == j)) {
+                            if (isN(i, j, m, n) == true)
+                                neighs++;
+                        }
+                    }
+                }
+                neighbours[i][j] = neighs;
+            }
+        }
+    }
+
+    public boolean inSmiley(){
+        int dif =(int) Math.sqrt(Math.abs(mx - smileyCenterX) * Math.abs(mx - smileyCenterX) + Math.abs(my - smileyCenterY) * Math.abs(my - smileyCenterY));
+        if(dif < 35)
+            return true;
+        else
+            return false;
     }
 
     public int inBoxX(){
