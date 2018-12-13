@@ -156,7 +156,7 @@ public class GUI extends JFrame {
             //end game message
             if(victory == true){
                 g.setColor(Color.GREEN);
-                vicMes = "YOU WON!";
+                vicMes = "YOU WIN!";
             } else if(defeat == true){
                 g.setColor(Color.RED);
                 vicMes = "YOU LOSE!";
