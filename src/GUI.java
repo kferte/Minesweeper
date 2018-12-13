@@ -16,6 +16,9 @@ public class GUI extends JFrame {
     int[][] neighbours = new int[16][9];
     boolean[][] revealed = new boolean[16][9];
     boolean[][] flagged = new boolean[16][9];
+    int smileyX = 605;
+    int smileyY = 5;
+    boolean happiness = true;
 
     public GUI(){
         this.setTitle("Minesweeper");
@@ -69,6 +72,7 @@ public class GUI extends JFrame {
                         g.setColor(Color.WHITE);
                         if(mines[i][j] == 1){
                             g.setColor(Color.RED);
+                            happiness = false;
                         }
                     }
                     if(mx >= spacing + i * 80 && mx < i * 80 + 80 - spacing && my >= spacing + j * 80 + 80 + 26 && my < j * 80 + 26 + 80 + 80 - spacing){
@@ -102,6 +106,21 @@ public class GUI extends JFrame {
                         }
                     }
                 }
+            }
+            //smiley painting
+            g.setColor(Color.YELLOW);
+            g.fillOval(smileyX, smileyY, 70, 70);
+            g.setColor(Color.BLACK);
+            g.fillOval(smileyX + 15, smileyY + 20, 10, 10);
+            g.fillOval(smileyX + 45, smileyY + 20, 10, 10);
+            if(happiness){
+                g.fillRect(smileyX + 20, smileyY + 50, 30, 5);
+                g.fillRect(smileyX + 17, smileyY + 45, 5, 5);
+                g.fillRect(smileyX + 48, smileyY + 45, 5, 5);
+            } else {
+                g.fillRect(smileyX + 20, smileyY + 45, 30, 5);
+                g.fillRect(smileyX + 17, smileyY + 50, 5, 5);
+                g.fillRect(smileyX + 48, smileyY + 50, 5, 5);
             }
         }
     }
