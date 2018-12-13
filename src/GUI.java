@@ -9,6 +9,7 @@ import java.util.Random;
 public class GUI extends JFrame {
 
     Date startDate = new Date();
+    Date endDate;
     int spacing = 5;
     int neighs = 0;
     public int mx = -1;
@@ -29,6 +30,9 @@ public class GUI extends JFrame {
     public boolean victory = false;
     public boolean defeat = false;
     public boolean resetter = false;
+    int vicMesX = 400;
+    int vicMesY = -50;
+    String vicMes = "Nothing yet";
 
     public GUI(){
         this.setTitle("Minesweeper");
@@ -79,7 +83,6 @@ public class GUI extends JFrame {
                         g.setColor(Color.WHITE);
                         if(mines[i][j] == 1){
                             g.setColor(Color.RED);
-                            happiness = false;
                         }
                     }
                     if(mx >= spacing + i * 80 && mx < i * 80 + 80 - spacing && my >= spacing + j * 80 + 80 + 26 && my < j * 80 + 26 + 80 + 80 - spacing){
@@ -149,6 +152,24 @@ public class GUI extends JFrame {
             } else {
                 g.drawString(Integer.toString(sec),timeX, timeY + 60);
             }
+
+            //end game message
+            if(victory == true){
+                g.setColor(Color.GREEN);
+                vicMes = "YOU WON!";
+            } else if(defeat == true){
+                g.setColor(Color.RED);
+                vicMes = "YOU LOSE!";
+            }
+
+            if(victory == true || defeat == true){
+                vicMesY = -50 + (int)(new Date().getTime() - endDate.getTime()) / 10;
+                if(vicMesY > 470){
+                    vicMesY = 470;
+                }
+                g.setFont(new Font("Tahoma", Font.BOLD, 80));
+                g.drawString(vicMes, vicMesX, vicMesY);
+            }
         }
     }
 
@@ -172,6 +193,9 @@ public class GUI extends JFrame {
 
         @Override
         public void mouseClicked(MouseEvent e) {
+
+            mx = e.getX();
+            my = e.getY();
 
             if(inBoxX() != -1 && inBoxY() != -1){
                 revealed[inBoxX()][inBoxY()] = true;
@@ -210,16 +234,21 @@ public class GUI extends JFrame {
     }
 
     public void checkVictoryStatus(){
-        for(int i = 0; i < 16; i++){
-            for(int j = 0; j < 9; j++){
-                if(revealed[i][j] == true && mines[i][j] == 1) {
-                    defeat = true;
-                    happiness = false;
+        if(defeat == false){
+            for(int i = 0; i < 16; i++){
+                for(int j = 0; j < 9; j++){
+                    if(revealed[i][j] == true && mines[i][j] == 1) {
+                        defeat = true;
+                        happiness = false;
+                        endDate = new Date();
+                    }
                 }
             }
         }
-        if(totalBoxesRevealed() >= 144 - totalMines()){
+
+        if(totalBoxesRevealed() >= 144 - totalMines() && victory == false){
             victory = true;
+            endDate = new Date();
         }
     }
 
@@ -248,9 +277,11 @@ public class GUI extends JFrame {
     public void resetAll(){
         resetter = true;
         startDate = new Date();
+        vicMesY = -50;
         happiness = true;
         victory = false;
         defeat = false;
+        vicMes = "Nothing yet";
 
         for(int i = 0; i < 16; i++){
             for(int j = 0; j < 9; j++){
