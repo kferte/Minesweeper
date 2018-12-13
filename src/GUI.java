@@ -28,6 +28,7 @@ public class GUI extends JFrame {
     boolean happiness = true;
     public boolean victory = false;
     public boolean defeat = false;
+    public boolean resetter = false;
 
     public GUI(){
         this.setTitle("Minesweeper");
@@ -131,8 +132,13 @@ public class GUI extends JFrame {
             //time counter
             g.setColor(Color.BLACK);
             g.fillRect(timeX, timeY, 120, 70);
-            sec = (int)(new Date().getTime() - startDate.getTime()) / 1000;
+            if(defeat == false && victory == false)
+                sec = (int)(new Date().getTime() - startDate.getTime()) / 1000;
             g.setColor(Color.WHITE);
+            if(victory == true)
+                g.setColor(Color.green);
+            else if(defeat == true)
+                g.setColor(Color.RED);
             g.setFont(new Font("Tahoma", Font.BOLD, 60));
             if(sec > 999) {
                 sec = 999;
@@ -203,7 +209,44 @@ public class GUI extends JFrame {
         }
     }
 
+    public void checkVictoryStatus(){
+        for(int i = 0; i < 16; i++){
+            for(int j = 0; j < 9; j++){
+                if(revealed[i][j] == true && mines[i][j] == 1) {
+                    defeat = true;
+                    happiness = false;
+                }
+            }
+        }
+        if(totalBoxesRevealed() >= 144 - totalMines()){
+            victory = true;
+        }
+    }
+
+    public int totalMines(){
+        int total = 0;
+        for(int i = 0; i < 16; i++){
+            for(int j = 0; j < 9; j++){
+                if(mines[i][j] == 1)
+                    total++;
+            }
+        }
+        return total;
+    }
+
+    public int totalBoxesRevealed(){
+        int total = 0;
+        for(int i = 0; i < 16; i++){
+            for(int j = 0; j < 9; j++){
+                if(revealed[i][j] == true)
+                    total++;
+            }
+        }
+        return total;
+    }
+
     public void resetAll(){
+        resetter = true;
         startDate = new Date();
         happiness = true;
         victory = false;
@@ -234,6 +277,7 @@ public class GUI extends JFrame {
                 neighbours[i][j] = neighs;
             }
         }
+        resetter = false;
     }
 
     public boolean inSmiley(){
