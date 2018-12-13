@@ -3,10 +3,12 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.Date;
 import java.util.Random;
 
 public class GUI extends JFrame {
 
+    Date startDate = new Date();
     int spacing = 5;
     int neighs = 0;
     public int mx = -1;
@@ -18,6 +20,9 @@ public class GUI extends JFrame {
     boolean[][] flagged = new boolean[16][9];
     int smileyX = 605;
     int smileyY = 5;
+    int timeX = 1150;
+    int timeY = 5;
+    int sec = 0;
     boolean happiness = true;
 
     public GUI(){
@@ -121,6 +126,21 @@ public class GUI extends JFrame {
                 g.fillRect(smileyX + 20, smileyY + 45, 30, 5);
                 g.fillRect(smileyX + 17, smileyY + 50, 5, 5);
                 g.fillRect(smileyX + 48, smileyY + 50, 5, 5);
+            }
+            //time counter
+            g.setColor(Color.BLACK);
+            g.fillRect(timeX, timeY, 120, 70);
+            sec = (int)(new Date().getTime() - startDate.getTime()) / 1000;
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Tahoma", Font.BOLD, 60));
+            if(sec > 999) {
+                sec = 999;
+            } else if(sec < 10) {
+                g.drawString(Integer.toString(sec),timeX + 80, timeY + 60);
+            } else if(sec > 9 && sec < 100) {
+                g.drawString(Integer.toString(sec),timeX + 40, timeY + 60);
+            } else {
+                g.drawString(Integer.toString(sec),timeX, timeY + 60);
             }
         }
     }
