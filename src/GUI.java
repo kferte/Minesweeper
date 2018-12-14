@@ -10,7 +10,7 @@ public class GUI extends JFrame {
 
     Date startDate = new Date();
     Date endDate;
-    int spacing = 5;
+    int spacing = 1;
     int neighs = 0;
     public int mx = -1;
     public int my = -1;
