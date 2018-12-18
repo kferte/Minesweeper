@@ -6,43 +6,40 @@ import java.awt.event.MouseMotionListener;
 import java.util.Date;
 import java.util.Random;
 
-public class GUI extends JFrame {
+class GUI extends JFrame {
 
-    Date startDate = new Date();
-    Date endDate;
-    int spacing = 1;
-    int neighs = 0;
-    public int mx = -1;
-    public int my = -1;
-    Random rand = new Random();
-    int[][] mines = new int[16][9];
-    int[][] neighbours = new int[16][9];
-    boolean[][] revealed = new boolean[16][9];
-    boolean[][] flagged = new boolean[16][9];
-    int smileyX = 605;
-    int smileyY = 5;
-    public int smileyCenterX = smileyX + 35;
-    public int smileyCenterY = smileyY + 55;
-    int timeX = 1150;
-    int timeY = 5;
-    int sec = 0;
-    boolean happiness = true;
-    public boolean victory = false;
-    public boolean defeat = false;
-    public boolean resetter = false;
-    int vicMesX = 400;
-    int vicMesY = -50;
-    String vicMes = "Nothing yet";
-    public int flaggerX = 445;
-    public int flaggerY = 5;
-    public int flaggerCenterX = flaggerX + 35;
-    public int flaggerCenterY = flaggerY + 35;
-    public boolean flagger = false;
+    private Date startDate = new Date();
+    private Date endDate;
+    private int spacing = 1;
+    private int neighs = 0;
+    private int mx = -1;
+    private int my = -1;
+    private Random rand = new Random();
+    private int[][] mines = new int[16][9];
+    private int[][] neighbours = new int[16][9];
+    private boolean[][] revealed = new boolean[16][9];
+    private boolean[][] flagged = new boolean[16][9];
+    private int smileyX = 605;
+    private int smileyY = 5;
+    private int smileyCenterX = smileyX + 35;
+    private int smileyCenterY = smileyY + 55;
+    private int sec = 0;
+    private boolean happiness = true;
+    private boolean victory;
+    private boolean defeat;
+    boolean resetter = false;
+    private int vicMesY;
+    private String vicMes = "Nothing yet";
+    private int flaggerX = 445;
+    private int flaggerY = 5;
+    private int flaggerCenterX = flaggerX + 35;
+    private int flaggerCenterY = flaggerY + 35;
+    private boolean flagger = false;
 
-    public GUI(){
+    GUI(){
         this.setTitle("Minesweeper");
         this.setSize(1286, 829);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setVisible(true);
         this.setResizable(false);
         for(int i = 0; i < 16; i++){
@@ -61,10 +58,11 @@ public class GUI extends JFrame {
                 for(int m = 0; m < 16; m++){
                     for(int n = 0; n < 9; n++){
                         if(!(m == i && n == j)) {
-                            if (isN(i, j, m, n) == true)
+                            if (isN(i, j, m, n))
                                 neighs++;
                         }
                     }
+
                 }
                 neighbours[i][j] = neighs;
             }
@@ -75,6 +73,9 @@ public class GUI extends JFrame {
         this.addMouseMotionListener(move);
         Click click = new Click();
         this.addMouseListener(click);
+        victory = false;
+        defeat = false;
+        vicMesY = -50;
     }
 
     public class Board extends JPanel {
@@ -84,7 +85,7 @@ public class GUI extends JFrame {
             for(int i = 0; i < 16; i++){
                 for(int j = 0; j < 9; j++){
                     g.setColor(Color.GRAY);
-                    if(revealed[i][j] == true){
+                    if(revealed[i][j]){
                         g.setColor(Color.WHITE);
                         if(mines[i][j] == 1){
                             g.setColor(Color.RED);
@@ -94,7 +95,7 @@ public class GUI extends JFrame {
                         g.setColor(Color.lightGray);
                     }
                     g.fillRect(spacing + i * 80, spacing + j * 80 + 80, 80 - 2 * spacing, 80 - 2 * spacing);
-                    if(revealed[i][j] == true) {
+                    if(revealed[i][j]) {
                         g.setColor(Color.BLACK);
                         if (mines[i][j] == 0 && neighbours[i][j] != 0) {
                             if(neighbours[i][j] == 1){
@@ -120,7 +121,7 @@ public class GUI extends JFrame {
                             g.fillRect(i * 80 + 25, j * 80 + 105, 30, 30);
                         }
                     }
-                    if(flagged[i][j] == true){
+                    if(flagged[i][j]){
                         g.setColor(Color.BLACK);
                         g.fillRect(i * 80 + 37, j * 80 + 80 + 15, 7, 40);
                         g.fillRect(i * 80 + 25, j * 80 + 80 + 50, 30, 10);
@@ -158,47 +159,50 @@ public class GUI extends JFrame {
             g.setColor(Color.BLACK);
             g.drawRect(flaggerX + 16, flaggerY + 15, 20, 15);
             g.drawRect(flaggerX + 17, flaggerY + 16, 18, 13);
-            if(flagger == true)
+            if(flagger)
                 g.setColor(Color.RED);
             g.drawOval(flaggerX + 1, flaggerY + 1, 68, 68);
             g.drawOval(flaggerX, flaggerY, 70, 70);
             g.drawOval(flaggerX + 2, flaggerY + 2, 66, 66);
             //time counter
             g.setColor(Color.BLACK);
+            int timeX = 1150;
+            int timeY = 5;
             g.fillRect(timeX, timeY, 120, 70);
-            if(defeat == false && victory == false)
+            if(!defeat && !victory)
                 sec = (int)(new Date().getTime() - startDate.getTime()) / 1000;
             g.setColor(Color.WHITE);
-            if(victory == true)
+            if(victory)
                 g.setColor(Color.green);
-            else if(defeat == true)
+            else if(defeat)
                 g.setColor(Color.RED);
             g.setFont(new Font("Tahoma", Font.BOLD, 60));
             if(sec > 999) {
                 sec = 999;
             } else if(sec < 10) {
-                g.drawString(Integer.toString(sec),timeX + 80, timeY + 60);
-            } else if(sec > 9 && sec < 100) {
-                g.drawString(Integer.toString(sec),timeX + 40, timeY + 60);
+                g.drawString(Integer.toString(sec), timeX + 80, timeY + 60);
+            } else if(sec < 100) {
+                g.drawString(Integer.toString(sec), timeX + 40, timeY + 60);
             } else {
-                g.drawString(Integer.toString(sec),timeX, timeY + 60);
+                g.drawString(Integer.toString(sec), timeX, timeY + 60);
             }
 
             //end game message
-            if(victory == true){
+            if(victory){
                 g.setColor(Color.GREEN);
                 vicMes = "YOU WIN!";
-            } else if(defeat == true){
+            } else if(defeat){
                 g.setColor(Color.RED);
                 vicMes = "YOU LOSE!";
             }
 
-            if(victory == true || defeat == true){
+            if(victory || defeat){
                 vicMesY = -50 + (int)(new Date().getTime() - endDate.getTime()) / 10;
                 if(vicMesY > 470){
                     vicMesY = 470;
                 }
                 g.setFont(new Font("Tahoma", Font.BOLD, 80));
+                int vicMesX = 400;
                 g.drawString(vicMes, vicMesX, vicMesY);
             }
         }
@@ -230,29 +234,26 @@ public class GUI extends JFrame {
 
             if(inBoxX() != -1 && inBoxY() != -1) {
                 System.out.println("The mouse is in the [" + inBoxX() + ", " + inBoxY() + "], Number of mine neighs: " + neighbours[inBoxX()][inBoxY()]);
-                if(flagger == true && revealed[inBoxX()][inBoxY()] == false){
-                    if(flagged[inBoxX()][inBoxY()] == false) {
+                if(flagger && !revealed[inBoxX()][inBoxY()]){
+                    if(!flagged[inBoxX()][inBoxY()]) {
                         flagged[inBoxX()][inBoxY()] = true;
                         System.out.println("Flagged: " + inBoxX() + ", " + inBoxY());
                     } else {
                         flagged[inBoxX()][inBoxY()] = false;
                     }
-                } else if(flagged[inBoxX()][inBoxY()] == false){
+                } else if(!flagged[inBoxX()][inBoxY()]){
                     revealed[inBoxX()][inBoxY()] = true;
                 }
             } else {
                 System.out.println("The pointer is not inside of any box");
             }
 
-            if(inSmiley() == true){
+            if(inSmiley()){
                 resetAll();
             }
 
-            if(inFlagger() == true){
-                if(flagger == false)
-                    flagger = true;
-                else
-                    flagger = false;
+            if(inFlagger()){
+                flagger = !flagger;
             }
         }
 
@@ -277,11 +278,11 @@ public class GUI extends JFrame {
         }
     }
 
-    public void checkVictoryStatus(){
-        if(defeat == false){
+    void checkVictoryStatus(){
+        if(!defeat){
             for(int i = 0; i < 16; i++){
                 for(int j = 0; j < 9; j++){
-                    if(revealed[i][j] == true && mines[i][j] == 1) {
+                    if(revealed[i][j] && mines[i][j] == 1) {
                         defeat = true;
                         happiness = false;
                         endDate = new Date();
@@ -290,13 +291,13 @@ public class GUI extends JFrame {
             }
         }
 
-        if(totalBoxesRevealed() >= 144 - totalMines() && victory == false){
+        if(totalBoxesRevealed() >= 144 - totalMines() && !victory){
             victory = true;
             endDate = new Date();
         }
     }
 
-    public int totalMines(){
+    private int totalMines(){
         int total = 0;
         for(int i = 0; i < 16; i++){
             for(int j = 0; j < 9; j++){
@@ -307,18 +308,18 @@ public class GUI extends JFrame {
         return total;
     }
 
-    public int totalBoxesRevealed(){
+    private int totalBoxesRevealed(){
         int total = 0;
         for(int i = 0; i < 16; i++){
             for(int j = 0; j < 9; j++){
-                if(revealed[i][j] == true)
+                if(revealed[i][j])
                     total++;
             }
         }
         return total;
     }
 
-    public void resetAll(){
+    private void resetAll(){
         resetter = true;
         startDate = new Date();
         vicMesY = -50;
@@ -345,7 +346,7 @@ public class GUI extends JFrame {
                 for(int m = 0; m < 16; m++){
                     for(int n = 0; n < 9; n++){
                         if(!(m == i && n == j)) {
-                            if (isN(i, j, m, n) == true)
+                            if (isN(i, j, m, n))
                                 neighs++;
                         }
                     }
@@ -356,23 +357,17 @@ public class GUI extends JFrame {
         resetter = false;
     }
 
-    public boolean inSmiley(){
+    private boolean inSmiley(){
         int dif =(int) Math.sqrt((Math.abs(mx - smileyCenterX) * Math.abs(mx - smileyCenterX)) + (Math.abs(my - smileyCenterY) * Math.abs(my - smileyCenterY)));
-        if(dif < 35)
-            return true;
-        else
-            return false;
+        return dif < 35;
     }
 
-    public boolean inFlagger(){
+    private boolean inFlagger(){
         int dif =(int) Math.sqrt((Math.abs(mx - flaggerCenterX) * Math.abs(mx - flaggerCenterX)) + (Math.abs(my - flaggerCenterY) * Math.abs(my - flaggerCenterY)));
-        if(dif < 35)
-            return true;
-        else
-            return false;
+        return dif < 35;
     }
 
-    public int inBoxX(){
+    private int inBoxX(){
         for(int i = 0; i < 16; i++){
             for(int j = 0; j < 9; j++){
                 if(mx >= spacing + i * 80 && mx < i * 80 + 80 - spacing && my >= spacing + j * 80 + 80 + 26 && my < j * 80 + 26 + 80 + 80 - spacing){
@@ -383,7 +378,7 @@ public class GUI extends JFrame {
         return -1;
     }
 
-    public int inBoxY(){
+    private int inBoxY(){
         for(int i = 0; i < 16; i++){
             for(int j = 0; j < 9; j++){
                 if(mx >= spacing + i * 80 && mx < i * 80 + 80 - spacing && my >= spacing + j * 80 + 80 + 26 && my < j * 80 + 26 + 80 + 80 - spacing){
@@ -394,10 +389,7 @@ public class GUI extends JFrame {
         return -1;
     }
 
-    public boolean isN(int mX, int mY, int cX, int cY){
-        if(mX - cX < 2 && mX - cX > -2 && mY - cY < 2 && mY - cY > -2 && mines[cX][cY] == 1){
-            return true;
-        }
-        return false;
+    private boolean isN(int mX, int mY, int cX, int cY){
+        return mX - cX < 2 && mX - cX > -2 && mY - cY < 2 && mY - cY > -2 && mines[cX][cY] == 1;
     }
 }
