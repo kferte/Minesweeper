@@ -217,10 +217,8 @@ class GUI extends JFrame {
 
         @Override
         public void mouseMoved(MouseEvent e) {
-            //System.out.println("The mouse was moved");
             mx = e.getX();
             my = e.getY();
-            //System.out.println(mx + " " + my);
         }
     }
 
